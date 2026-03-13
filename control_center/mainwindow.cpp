@@ -20,6 +20,7 @@ MainWindow::MainWindow(QWidget *parent)
       refreshButton(nullptr),
       diagnosticButton(nullptr),
       injectFaultButton(nullptr),
+      clearFaultButton(nullptr),
       exportLogsButton(nullptr),
       logViewer(nullptr),
       apiClient(nullptr)
@@ -33,6 +34,9 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(apiClient, &ApiClient::diagnosticReceived,
             this, &MainWindow::diagnosticResult);
+
+    connect(apiClient, &ApiClient::actionSucceeded,
+            this, &MainWindow::handleActionSucceeded);
 
     connect(apiClient, &ApiClient::requestFailed,
             this, &MainWindow::handleRequestFailure);
@@ -77,12 +81,14 @@ void MainWindow::setupUi()
 
     refreshButton = new QPushButton("Refresh Status");
     diagnosticButton = new QPushButton("Run Diagnostic");
-    injectFaultButton = new QPushButton("Inject Fault (UI Placeholder)");
+    injectFaultButton = new QPushButton("Inject Fault");
+    clearFaultButton = new QPushButton("Clear Fault");
     exportLogsButton = new QPushButton("Export Logs");
 
     buttonLayout->addWidget(refreshButton);
     buttonLayout->addWidget(diagnosticButton);
     buttonLayout->addWidget(injectFaultButton);
+    buttonLayout->addWidget(clearFaultButton);
     buttonLayout->addWidget(exportLogsButton);
 
     mainLayout->addLayout(buttonLayout);
@@ -98,6 +104,7 @@ void MainWindow::setupUi()
     connect(refreshButton, &QPushButton::clicked, this, &MainWindow::refreshDevices);
     connect(diagnosticButton, &QPushButton::clicked, this, &MainWindow::runDiagnostic);
     connect(injectFaultButton, &QPushButton::clicked, this, &MainWindow::injectFault);
+    connect(clearFaultButton, &QPushButton::clicked, this, &MainWindow::clearFault);
     connect(exportLogsButton, &QPushButton::clicked, this, &MainWindow::exportLogs);
 }
 
@@ -149,12 +156,77 @@ void MainWindow::runDiagnostic()
 
 void MainWindow::injectFault()
 {
-    appendLog("Inject fault button clicked. Backend wiring can be added next.");
-    QMessageBox::information(
-        this,
-        "Placeholder",
-        "Fault injection UI is currently a placeholder.\nNext step: connect this button to the Flask inject_fault endpoint."
-    );
+    const int row = getSelectedRow();
+
+    if (row < 0)
+    {
+        QMessageBox::warning(this, "No Device Selected", "Please select a device first.");
+        return;
+    }
+
+    QTableWidgetItem *idItem = deviceTable->item(row, 0);
+    QTableWidgetItem *typeItem = deviceTable->item(row, 1);
+
+    if (idItem == nullptr || typeItem == nullptr)
+    {
+        QMessageBox::warning(this, "Invalid Selection", "Could not determine selected device.");
+        return;
+    }
+
+    const QString deviceId = idItem->text();
+    const QString deviceType = typeItem->text();
+    const QString fault = getSuggestedFaultForType(deviceType);
+
+    appendLog("Injecting fault on " + deviceId + ": " + fault);
+    apiClient->injectFault(deviceId, fault);
+}
+
+void MainWindow::clearFault()
+{
+    const int row = getSelectedRow();
+
+    if (row < 0)
+    {
+        QMessageBox::warning(this, "No Device Selected", "Please select a device first.");
+        return;
+    }
+
+    QTableWidgetItem *idItem = deviceTable->item(row, 0);
+
+    if (idItem == nullptr)
+    {
+        QMessageBox::warning(this, "Invalid Selection", "Could not determine selected device.");
+        return;
+    }
+
+    const QString deviceId = idItem->text();
+
+    appendLog("Clearing fault on " + deviceId);
+    apiClient->clearFault(deviceId);
+}
+
+QString MainWindow::getSuggestedFaultForType(const QString &type) const
+{
+    if (type == "signal")
+    {
+        return "LAMP_FAILURE";
+    }
+    else if (type == "track_sensor")
+    {
+        return "STUCK_OCCUPIED";
+    }
+    else if (type == "switch")
+    {
+        return "FAILED_TO_MOVE";
+    }
+
+    return "NONE";
+}
+
+void MainWindow::handleActionSucceeded(QString message)
+{
+    appendLog(message);
+    apiClient->fetchDevices();
 }
 
 void MainWindow::exportLogs()
@@ -237,8 +309,20 @@ void MainWindow::handleRequestFailure(QString errorMessage)
 
 void MainWindow::colorizeRow(int row, const QString &type, const QString &state, const QString &fault)
 {
+    QTableWidgetItem *idItem = deviceTable->item(row, 0);
+    QTableWidgetItem *typeItem = deviceTable->item(row, 1);
     QTableWidgetItem *stateItem = deviceTable->item(row, 2);
     QTableWidgetItem *faultItem = deviceTable->item(row, 3);
+
+    QList<QTableWidgetItem*> rowItems = {idItem, typeItem, stateItem, faultItem};
+
+    for (QTableWidgetItem *item : rowItems)
+    {
+        if (item != nullptr)
+        {
+            item->setForeground(QBrush(QColor(20, 20, 20)));
+        }
+    }
 
     if (stateItem != nullptr)
     {
@@ -285,11 +369,24 @@ void MainWindow::colorizeRow(int row, const QString &type, const QString &state,
     {
         if (fault != "NONE")
         {
-            faultItem->setBackground(QBrush(QColor(255, 179, 179)));
+            faultItem->setBackground(QBrush(QColor(255, 120, 120)));
+            faultItem->setForeground(QBrush(QColor(0, 0, 0)));
         }
         else
         {
             faultItem->setBackground(QBrush(QColor(204, 255, 204)));
+            faultItem->setForeground(QBrush(QColor(20, 20, 20)));
+        }
+    }
+
+    if (fault != "NONE")
+    {
+        for (QTableWidgetItem *item : rowItems)
+        {
+            if (item != nullptr && item != faultItem)
+            {
+                item->setBackground(QBrush(QColor(255, 235, 235)));
+            }
         }
     }
 }

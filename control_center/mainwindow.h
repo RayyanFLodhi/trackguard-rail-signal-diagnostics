@@ -24,10 +24,12 @@ private slots:
     void refreshDevices();
     void runDiagnostic();
     void injectFault();
+    void clearFault();
     void exportLogs();
 
     void updateDeviceTable(QJsonArray devicesJson);
     void diagnosticResult(QString result);
+    void handleActionSucceeded(QString message);
     void handleRequestFailure(QString errorMessage);
 
 private:
@@ -35,11 +37,13 @@ private:
     void appendLog(const QString &message);
     int getSelectedRow() const;
     void colorizeRow(int row, const QString &type, const QString &state, const QString &fault);
+    QString getSuggestedFaultForType(const QString &type) const;
 
     QTableWidget *deviceTable;
     QPushButton *refreshButton;
     QPushButton *diagnosticButton;
     QPushButton *injectFaultButton;
+    QPushButton *clearFaultButton;
     QPushButton *exportLogsButton;
     QTextEdit *logViewer;
 

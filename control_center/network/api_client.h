@@ -14,10 +14,13 @@ public:
 
     void fetchDevices();
     void runDiagnostic(const QString &deviceId);
+    void injectFault(const QString &deviceId, const QString &fault);
+    void clearFault(const QString &deviceId);
 
 signals:
     void devicesReceived(QJsonArray devices);
     void diagnosticReceived(QString result);
+    void actionSucceeded(QString message);
     void requestFailed(QString errorMessage);
 
 private:

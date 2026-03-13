@@ -83,3 +83,47 @@ void ApiClient::runDiagnostic(const QString &deviceId)
         reply->deleteLater();
     });
 }
+
+void ApiClient::injectFault(const QString &deviceId, const QString &fault)
+{
+    const QString urlString = "http://127.0.0.1:5000/devices/" + deviceId + "/inject_fault";
+    QNetworkRequest request{QUrl(urlString)};
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+
+    QJsonObject body;
+    body["fault"] = fault;
+
+    QNetworkReply *reply = networkManager->post(request, QJsonDocument(body).toJson());
+
+    connect(reply, &QNetworkReply::finished, this, [this, reply, deviceId, fault]() {
+        if (reply->error() != QNetworkReply::NoError)
+        {
+            emit requestFailed("Failed to inject fault on " + deviceId + ": " + reply->errorString());
+            reply->deleteLater();
+            return;
+        }
+
+        emit actionSucceeded("Injected fault on " + deviceId + ": " + fault);
+        reply->deleteLater();
+    });
+}
+
+void ApiClient::clearFault(const QString &deviceId)
+{
+    const QString urlString = "http://127.0.0.1:5000/devices/" + deviceId + "/clear_fault";
+    QNetworkRequest request{QUrl(urlString)};
+
+    QNetworkReply *reply = networkManager->post(request, QByteArray());
+
+    connect(reply, &QNetworkReply::finished, this, [this, reply, deviceId]() {
+        if (reply->error() != QNetworkReply::NoError)
+        {
+            emit requestFailed("Failed to clear fault on " + deviceId + ": " + reply->errorString());
+            reply->deleteLater();
+            return;
+        }
+
+        emit actionSucceeded("Cleared fault on " + deviceId);
+        reply->deleteLater();
+    });
+}

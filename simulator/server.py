@@ -36,9 +36,9 @@ def append_log(device_id: str, action: str, result: str, details: str) -> None:
 
 devices: Dict[str, RailDevice] = {
     "SIG-01": SignalController("SIG-01", "GREEN"),
-    "SIG-02": SignalController("SIG-02", "RED"),
+    "SIG-02": SignalController("SIG-02", "RED", "LAMP_FAILURE"),
     "TRK-01": TrackSensor("TRK-01", "CLEAR"),
-    "TRK-02": TrackSensor("TRK-02", "OCCUPIED"),
+    "TRK-02": TrackSensor("TRK-02", "OCCUPIED", "STUCK_OCCUPIED"),
     "SWT-01": SwitchController("SWT-01", "STRAIGHT"),
     "SWT-02": SwitchController("SWT-02", "DIVERGING"),
 }

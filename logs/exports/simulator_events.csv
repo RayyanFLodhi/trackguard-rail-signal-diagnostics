@@ -6,3 +6,11 @@ timestamp,device_id,action,result,details
 2026-03-12 23:27:48,TRK-01,run_test,PASS,track_sensor TRK-01 passed diagnostics successfully
 2026-03-12 23:27:50,SIG-02,run_test,PASS,signal SIG-02 passed diagnostics successfully
 2026-03-12 23:27:51,SIG-01,run_test,PASS,signal SIG-01 passed diagnostics successfully
+2026-03-12 23:58:51,TRK-01,run_test,PASS,track_sensor TRK-01 passed diagnostics successfully
+2026-03-12 23:58:55,TRK-02,run_test,FAIL,track_sensor TRK-02 failed diagnostics due to fault: STUCK_OCCUPIED
+2026-03-12 23:58:56,TRK-02,run_test,FAIL,track_sensor TRK-02 failed diagnostics due to fault: STUCK_OCCUPIED
+2026-03-12 23:58:57,TRK-02,run_test,FAIL,track_sensor TRK-02 failed diagnostics due to fault: STUCK_OCCUPIED
+2026-03-12 23:58:59,TRK-02,clear_fault,OK,Fault cleared on TRK-02
+2026-03-12 23:59:02,SIG-02,inject_fault,OK,Fault injected on SIG-02: LAMP_FAILURE
+2026-03-12 23:59:04,TRK-02,inject_fault,OK,Fault injected on TRK-02: STUCK_OCCUPIED
+2026-03-12 23:59:07,TRK-02,run_test,FAIL,track_sensor TRK-02 failed diagnostics due to fault: STUCK_OCCUPIED
