@@ -1,3 +1,29 @@
+<table>
+  <tr>
+    <td align="center">
+      <a href="https://streamable.com/7kjtpk">
+        <img src="docs/images/qt-demo-thumbnail.png" width="320" alt="Qt Control Center Demo">
+      </a>
+      <br>
+      <strong>Qt Control Center Demo</strong>
+    </td>
+    <td align="center">
+      <a href="https://streamable.com/wlhsip">
+        <img src="docs/images/perl-demo-thumbnail.png" width="320" alt="Perl Automation Demo">
+      </a>
+      <br>
+      <strong>Perl Automation Demo</strong>
+    </td>
+    <td align="center">
+      <a href="https://streamable.com/r9bnlx">
+        <img src="docs/images/vba-demo-thumbnail.png" width="320" alt="Excel VBA Demo">
+      </a>
+      <br>
+      <strong>Excel VBA Demo</strong>
+    </td>
+  </tr>
+</table>
+
 # TrackGuard – Rail Signal Diagnostics Simulator
 
 TrackGuard is a **railway signaling diagnostics simulator** that demonstrates a full **client-server architecture** for monitoring and testing rail control devices.
