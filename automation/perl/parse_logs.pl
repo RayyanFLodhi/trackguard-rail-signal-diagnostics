@@ -1,6 +1,7 @@
 use strict;
 use warnings;
 
+my $file = "logs/exports/control_center_export.csv";
 
 open(my $fh, "<", $file) or die "Could not open file '$file': $!";
 
