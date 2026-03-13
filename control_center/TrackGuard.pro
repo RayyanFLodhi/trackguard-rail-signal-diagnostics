@@ -1,19 +1,17 @@
-QT += core gui network widgets
+QT += core gui widgets network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+
+CONFIG += c++17
 
 TARGET = TrackGuard
 TEMPLATE = app
 
-SOURCES += main.cpp \
-           mainwindow.cpp \
-           network/api_client.cpp \
-           models/device.cpp \
-           widgets/signal_widget.cpp
+SOURCES += \
+    main.cpp \
+    mainwindow.cpp \
+    network/api_client.cpp
 
-HEADERS += mainwindow.h \
-           network/api_client.h \
-           models/device.h \
-           widgets/signal_widget.h
-
-FORMS += mainwindow.ui
+HEADERS += \
+    mainwindow.h \
+    network/api_client.h
