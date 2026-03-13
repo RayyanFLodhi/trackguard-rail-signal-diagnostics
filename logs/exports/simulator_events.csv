@@ -1,0 +1,8 @@
+timestamp,device_id,action,result,details
+2026-03-13 0:55,TRK-01,run_test,PASS,track_sensor TRK-01 passed diagnostics successfully
+2026-03-13 1:04,SWT-02,run_test,PASS,switch SWT-02 passed diagnostics successfully
+2026-03-13 1:04,SWT-02,inject_fault,OK,Fault injected on SWT-02: FAILED_TO_MOVE
+2026-03-13 01:12:51,TRK-01,run_test,PASS,track_sensor TRK-01 passed diagnostics successfully
+2026-03-13 01:12:52,TRK-01,inject_fault,OK,Fault injected on TRK-01: STUCK_OCCUPIED
+2026-03-13 01:12:57,TRK-01,clear_fault,OK,Fault cleared on TRK-01
+2026-03-13 01:13:00,SIG-02,clear_fault,OK,Fault cleared on SIG-02
